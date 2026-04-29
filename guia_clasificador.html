@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clasificador de Correos Universitarios</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+  :root {
+    --bg: #0b0f1a;
+    --surface: #131929;
+    --surface2: #1a2236;
+    --border: #1e2d4a;
+    --accent: #4f9cf9;
+    --accent2: #7b5cf0;
+    --green: #22d3a0;
+    --orange: #f97316;
+    --yellow: #fbbf24;
+    --red: #f43f5e;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --cat-tarea: #4f9cf9;
+    --cat-nota: #22d3a0;
+    --cat-anuncio: #fbbf24;
+    --cat-evento: #a78bfa;
+    --cat-logro: #fb923c;
+    --cat-intercambio: #f43f5e;
+    --cat-otro: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(79,156,249,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(79,156,249,0.1);
+    border: 1px solid rgba(79,156,249,0.3);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    background: linear-gradient(135deg, #e2e8f0 30%, #4f9cf9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .tab {
+    padding: 0.5rem 1.1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active {
+    background: rgba(79,156,249,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* MAIN CONTENT */
+  main {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .step-num {
+    width: 26px; height: 26px;
+    background: rgba(79,156,249,0.15);
+    border: 1px solid rgba(79,156,249,0.4);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* CODE BLOCKS */
+  pre {
+    background: #080d18;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.1rem;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    margin: 0.8rem 0;
+  }
+
+  .kw { color: #7b5cf0; }
+  .fn { color: #4f9cf9; }
+  .str { color: #22d3a0; }
+  .cm { color: #3d5a8a; font-style: italic; }
+  .num { color: #fb923c; }
+
+  /* CATEGORIES GRID */
+  .cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  .cat-card {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .cat-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+
+  .cat-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+  .cat-badge {
+    display: inline-block;
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    margin-top: 0.4rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* PIPELINE FLOW */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+
+  .pipe-step {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.78rem;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .pipe-step .icon { font-size: 1.2rem; display: block; margin-bottom: 0.3rem; }
+  .pipe-step .label { font-weight: 500; color: var(--text); font-size: 0.72rem; }
+  .pipe-step .sub { color: var(--muted); font-size: 0.65rem; margin-top: 0.1rem; }
+
+  .pipe-arrow { color: var(--muted); font-size: 1.1rem; flex-shrink: 0; }
+
+  /* DEMO SECTION */
+  .demo-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 80px;
+  }
+
+  .demo-input:focus { border-color: var(--accent); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.3rem;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0b0f1a;
+  }
+  .btn-primary:hover { background: #6aabff; transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .result-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .result-box.show { display: block; animation: fadeIn 0.25s ease; }
+
+  .result-cat {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .result-conf {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  .prob-bar {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .prob-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.78rem;
+  }
+
+  .prob-label {
+    width: 90px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    text-align: right;
+    font-size: 0.72rem;
+  }
+
+  .prob-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .prob-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(.16,1,.3,1);
+  }
+
+  .prob-val {
+    width: 45px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* QUICK EXAMPLES */
+  .examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.6rem;
+    margin: 0.8rem 0;
+  }
+
+  .example-chip {
+    padding: 0.6rem 0.9rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: var(--text);
+  }
+
+  .example-chip:hover {
+    border-color: var(--accent);
+    background: rgba(79,156,249,0.06);
+  }
+
+  .example-chip .chip-cat {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  /* TIPS */
+  .tip {
+    background: rgba(79,156,249,0.06);
+    border: 1px solid rgba(79,156,249,0.2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    margin: 0.8rem 0;
+  }
+
+  .tip-warn {
+    background: rgba(244,63,94,0.06);
+    border-color: rgba(244,63,94,0.2);
+    border-left-color: var(--red);
+  }
+
+  .tip-green {
+    background: rgba(34,211,160,0.06);
+    border-color: rgba(34,211,160,0.2);
+    border-left-color: var(--green);
+  }
+
+  /* INFO GRID */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  .info-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .info-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .info-title { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; }
+  .info-text { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+  /* API SECTION */
+  .endpoint {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  .method {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    width: 46px;
+    text-align: center;
+  }
+
+  .method.get { background: rgba(34,211,160,0.15); color: var(--green); }
+  .method.post { background: rgba(79,156,249,0.15); color: var(--accent); }
+
+  .path {
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    font-size: 0.78rem;
+  }
+
+  .ep-desc { color: var(--muted); font-size: 0.75rem; }
+
+  p { line-height: 1.65; font-size: 0.88rem; color: #b0bec5; margin-bottom: 0.6rem; }
+  ul, ol { padding-left: 1.4rem; margin: 0.5rem 0; }
+  li { font-size: 0.85rem; color: #b0bec5; line-height: 1.7; }
+  strong { color: var(--text); font-weight: 500; }
+
+  .section-header {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .row { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .col { flex: 1; min-width: 220px; }
+
+  @media (max-width: 600px) {
+    main { padding: 0 1rem 3rem; }
+    .cats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Machine Learning · NLP · Scikit-learn</div>
+  <h1>Clasificador de Correos<br>Universitarios</h1>
+  <p class="subtitle">Guía completa paso a paso para construir tu modelo de ML</p>
+</header>
+
+<nav>
+  <button class="tab active" onclick="showSection('overview')">Visión General</button>
+  <button class="tab" onclick="showSection('data')">Dataset</button>
+  <button class="tab" onclick="showSection('pipeline')">Pipeline ML</button>
+  <button class="tab" onclick="showSection('demo')">Demo Interactiva</button>
+  <button class="tab" onclick="showSection('mejoras')">Mejoras</button>
+  <button class="tab" onclick="showSection('api')">API REST</button>
+</nav>
+
+<main>
+
+<!-- ── OVERVIEW ─────────────────────────────── -->
+<section id="overview" class="section active">
+  <h2 class="section-header">¿Qué vamos a construir?</h2>
+
+  <p>Un sistema que lee el texto de un correo universitario y automáticamente lo clasifica en una de 7 categorías útiles. Usamos <strong>TF-IDF + Regresión Logística</strong>, el combo clásico que funciona muy bien para clasificación de texto.</p>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <span class="icon">📧</span>
+      <div class="label">Texto del correo</div>
+      <div class="sub">entrada cruda</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-step">
+      <span class="icon">🧹</span>
+      <div class="label">Limpieza</div>
+      <div class="sub">regex, lowercase</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-step">
+      <span class="icon">📊</span>
+      <div class="label">TF-IDF</div>
+      <div class="sub">vectorización</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-step">
+      <span class="icon">🤖</span>
+      <div class="label">Modelo</div>
+      <div class="sub">Logistic Reg.</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-step" style="border-color:rgba(79,156,249,0.4)">
+      <span class="icon">🏷️</span>
+      <div class="label">Categoría</div>
+      <div class="sub">+ confianza</div>
+    </div>
+  </div>
+
+  <h2 class="section-header" style="margin-top:1.8rem">Las 7 Categorías</h2>
+  <div class="cats">
+    <div class="cat-card" style="border-color:rgba(79,156,249,0.3); background:rgba(79,156,249,0.04)">
+      <div class="cat-name" style="color:var(--cat-tarea)">📚 tarea</div>
+      <div class="cat-desc">Asignaciones, trabajos y entregas académicas</div>
+    </div>
+    <div class="cat-card" style="border-color:rgba(34,211,160,0.3); background:rgba(34,211,160,0.04)">
+      <div class="cat-name" style="color:var(--cat-nota)">📝 nota</div>
+      <div class="cat-desc">Calificaciones y resultados de exámenes</div>
+    </div>
+    <div class="cat-card" style="border-color:rgba(251,191,36,0.3); background:rgba(251,191,36,0.04)">
+      <div class="cat-name" style="color:var(--cat-anuncio)">📢 anuncio</div>
+      <div class="cat-desc">Avisos institucionales y comunicados</div>
+    </div>
+    <div class="cat-card" style="border-color:rgba(167,139,250,0.3); background:rgba(167,139,250,0.04)">
+      <div class="cat-name" style="color:var(--cat-evento)">🗓️ evento</div>
+      <div class="cat-desc">Conferencias, talleres y actividades</div>
+    </div>
+    <div class="cat-card" style="border-color:rgba(251,146,60,0.3); background:rgba(251,146,60,0.04)">
+      <div class="cat-name" style="color:var(--cat-logro)">🏆 logro</div>
+      <div class="cat-desc">Reconocimientos y premios académicos</div>
+    </div>
+    <div class="cat-card" style="border-color:rgba(244,63,94,0.5); background:rgba(244,63,94,0.08); position:relative">
+      <div class="cat-name" style="color:var(--cat-intercambio)">✈️ intercambio</div>
+      <div class="cat-desc">Movilidad, becas y convocatorias internacionales</div>
+      <div class="cat-badge" style="background:rgba(244,63,94,0.15); color:var(--red)">⭐ PRIORIDAD ALTA</div>
+    </div>
+    <div class="cat-card" style="border-color:rgba(100,116,139,0.3); background:rgba(100,116,139,0.04)">
+      <div class="cat-name" style="color:var(--cat-otro)">📌 otro</div>
+      <div class="cat-desc">Información general no clasificada</div>
+    </div>
+  </div>
+
+  <div class="tip tip-green">
+    💡 <strong>¿Por qué Regresión Logística?</strong> Es el modelo ideal para texto + TF-IDF: rápido, interpretable, no necesita GPU, y alcanza ~85-95% de precisión con suficientes datos. Mucho mejor que Random Forest para texto.
+  </div>
+</section>
+
+<!-- ── DATASET ─────────────────────────────── -->
+<section id="data" class="section">
+  <h2 class="section-header">Estructura del Dataset</h2>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">1</div>Formato del CSV</div>
+    <p>El dataset tiene dos columnas: el texto del correo y su categoría. Más datos = mejor modelo.</p>
+    <pre><span class="cm"># correos.csv</span>
+texto,categoria
+"Se publicó una nueva tarea en Classroom",tarea
+"Notas del parcial disponibles en la plataforma",nota
+"Convocatoria abierta para intercambio en España",intercambio
+"Evento de bienvenida para estudiantes nuevos",evento</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">2</div>Mínimo de datos recomendado</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-icon">🟡</div>
+        <div class="info-title">Para empezar</div>
+        <div class="info-text">10–20 ejemplos por categoría. El modelo aprenderá patrones básicos.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🟢</div>
+        <div class="info-title">Buena precisión</div>
+        <div class="info-text">50–100 ejemplos por categoría. Aquí el modelo se vuelve confiable.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🔵</div>
+        <div class="info-title">Excelente</div>
+        <div class="info-text">200+ ejemplos por categoría. Muy alta precisión con casos ambiguos.</div>
+      </div>
+      <div class="info-card" style="border-color:rgba(244,63,94,0.3)">
+        <div class="info-icon">✈️</div>
+        <div class="info-title">Intercambio (prioridad)</div>
+        <div class="info-text">Agrega el doble de ejemplos para esta categoría. La variedad importa: Erasmus, Fulbright, DAAD, becas...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">3</div>Cargar desde CSV</div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Opción 1: dataset en código (para empezar)</span>
+datos = [
+    (<span class="str">"Se publicó una tarea en Classroom"</span>, <span class="str">"tarea"</span>),
+    (<span class="str">"Convocatoria para intercambio en Canadá"</span>, <span class="str">"intercambio"</span>),
+    <span class="cm"># ... más datos</span>
+]
+df = pd.DataFrame(datos, columns=[<span class="str">"texto"</span>, <span class="str">"categoria"</span>])
+
+<span class="cm"># Opción 2: cargar desde archivo CSV</span>
+df = pd.read_csv(<span class="str">"correos.csv"</span>)
+
+<span class="cm"># Verificar distribución de clases</span>
+<span class="fn">print</span>(df[<span class="str">"categoria"</span>].value_counts())</pre>
+  </div>
+
+  <div class="tip tip-warn">
+    ⚠️ <strong>Problema del desbalance de clases:</strong> Si tienes 100 correos de "anuncio" y solo 5 de "intercambio", el modelo aprenderá a ignorar "intercambio". Solución: equilibra los datos o usa <code>class_weight='balanced'</code> en Logistic Regression.
+  </div>
+</section>
+
+<!-- ── PIPELINE ─────────────────────────────── -->
+<section id="pipeline" class="section">
+  <h2 class="section-header">Pipeline Completo de ML</h2>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">1</div>Limpieza de Texto</div>
+    <p>Antes de entrenar, normalizamos el texto para que palabras como "Intercambio", "INTERCAMBIO" e "intercambio" sean la misma para el modelo.</p>
+    <pre><span class="kw">import</span> re
+
+<span class="kw">def</span> <span class="fn">limpiar_texto</span>(texto: str) -> str:
+    <span class="cm"># 1. Minúsculas</span>
+    texto = texto.lower()
+    
+    <span class="cm"># 2. Eliminar URLs y emails</span>
+    texto = re.sub(<span class="str">r'http\S+|www\S+'</span>, <span class="str">''</span>, texto)
+    texto = re.sub(<span class="str">r'\S+@\S+'</span>, <span class="str">''</span>, texto)
+    
+    <span class="cm"># 3. Conservar letras (incluyendo á,é,í,ó,ú,ñ)</span>
+    texto = re.sub(<span class="str">r'[^a-záéíóúñü\s]'</span>, <span class="str">''</span>, texto)
+    
+    <span class="cm"># 4. Espacios extra</span>
+    texto = re.sub(<span class="str">r'\s+'</span>, <span class="str">' '</span>, texto).strip()
+    
+    <span class="kw">return</span> texto
+
+df[<span class="str">"texto_limpio"</span>] = df[<span class="str">"texto"</span>].apply(limpiar_texto)</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">2</div>Separar Datos</div>
+    <pre>X = df[<span class="str">"texto_limpio"</span>]
+y = df[<span class="str">"categoria"</span>]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=<span class="num">0.20</span>,   <span class="cm"># 20% para evaluar</span>
+    random_state=<span class="num">42</span>,
+    stratify=y        <span class="cm"># ← mantiene proporción de clases</span>
+)</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">3</div>TF-IDF — Vectorización</div>
+    <p>Convierte texto en números que el modelo puede procesar. <strong>TF-IDF premia palabras específicas</strong> como "intercambio" o "convocatoria" y penaliza palabras genéricas.</p>
+    <pre>TfidfVectorizer(
+    ngram_range=(<span class="num">1</span>, <span class="num">2</span>),  <span class="cm"># "intercambio" Y "intercambio académico"</span>
+    max_features=<span class="num">5000</span>,  <span class="cm"># máximo 5000 características</span>
+    sublinear_tf=<span class="kw">True</span>,  <span class="cm"># escala log, evita que docs largos dominen</span>
+    min_df=<span class="num">1</span>,           <span class="cm"># cada palabra cuenta (dataset pequeño)</span>
+)</pre>
+
+    <div class="tip" style="margin-top:0.8rem">
+      💡 <strong>¿Qué son los n-gramas?</strong> Con <code>ngram_range=(1,2)</code> el modelo aprende que <em>"beca internacional"</em> es diferente de <em>"beca"</em> sola. Esto ayuda mucho con la categoría intercambio.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">4</div>Pipeline: Todo Junto</div>
+    <pre><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+
+pipeline = Pipeline([
+    (<span class="str">"tfidf"</span>, TfidfVectorizer(
+        ngram_range=(<span class="num">1</span>, <span class="num">2</span>),
+        max_features=<span class="num">5000</span>,
+        sublinear_tf=<span class="kw">True</span>,
+    )),
+    (<span class="str">"modelo"</span>, LogisticRegression(
+        max_iter=<span class="num">1000</span>,
+        class_weight=<span class="str">"balanced"</span>,  <span class="cm"># ← maneja desbalance</span>
+        random_state=<span class="num">42</span>
+    ))
+])
+
+pipeline.fit(X_train, y_train)     <span class="cm"># entrenar</span>
+y_pred = pipeline.predict(X_test)  <span class="cm"># predecir</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="step-num">5</div>Evaluación</div>
+    <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+
+<span class="cm"># Reporte completo por categoría</span>
+<span class="fn">print</span>(classification_report(y_test, y_pred))
+
+<span class="cm"># Ejemplo de salida:
+#               precision  recall  f1-score
+# intercambio      0.92    0.89      0.90  ← así de detallado
+# tarea            0.95    0.93      0.94
+# ...</span>
+
+<span class="cm"># Validación cruzada (más confiable)</span>
+scores = cross_val_score(pipeline, X, y, cv=<span class="num">5</span>)
+<span class="fn">print</span>(<span class="str">f"Accuracy: {scores.mean():.2%} ± {scores.std():.2%}"</span>)</pre>
+
+    <div class="info-grid" style="margin-top:0.8rem">
+      <div class="info-card">
+        <div class="info-title">Precision</div>
+        <div class="info-text">De todos los que predije como "intercambio", ¿cuántos realmente lo eran?</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">Recall</div>
+        <div class="info-text">De todos los correos de intercambio reales, ¿cuántos detecté?</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">F1-Score</div>
+        <div class="info-text">Promedio armónico de precision y recall. El mejor indicador general.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEMO ─────────────────────────────────── -->
+<section id="demo" class="section">
+  <h2 class="section-header">Demo Interactiva</h2>
+  <p>Simula cómo funcionaría el clasificador. Escribe un correo o usa los ejemplos rápidos.</p>
+
+  <div class="card">
+    <p style="font-size:0.78rem; color:var(--muted); margin-bottom:0.6rem">Ejemplos rápidos — haz clic para cargar:</p>
+    <div class="examples-grid" id="examples-grid"></div>
+  </div>
+
+  <div class="card">
+    <textarea class="demo-input" id="email-input" placeholder="Escribe aquí el texto de un correo universitario..."></textarea>
+    <div style="display:flex; gap:0.6rem; margin-top:0.8rem; flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="clasificar()">🤖 Clasificar</button>
+      <button class="btn btn-ghost" onclick="limpiar()">✕ Limpiar</button>
+    </div>
+
+    <div class="result-box" id="result-box">
+      <div style="display:flex; align-items:baseline; gap:0.8rem; flex-wrap:wrap">
+        <div class="result-cat" id="result-cat"></div>
+        <div class="result-conf" id="result-conf"></div>
+      </div>
+      <div class="prob-bar" id="prob-bar"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MEJORAS ─────────────────────────────── -->
+<section id="mejoras" class="section">
+  <h2 class="section-header">Cómo Mejorar la Precisión</h2>
+
+  <div class="card">
+    <div class="card-title">🎯 Problema: Confusión entre Categorías Similares</div>
+    <p>Las categorías que más se confunden son:</p>
+    <ul>
+      <li><strong>anuncio vs evento</strong>: ambos son comunicados. Solución: ejemplos donde el evento tiene fecha concreta.</li>
+      <li><strong>intercambio vs anuncio</strong>: una convocatoria puede parecer un anuncio. Solución: palabras clave + más datos de intercambio.</li>
+      <li><strong>logro vs nota</strong>: ambos hablan de calificaciones. Solución: logros hablan de "primer lugar", "reconocimiento", "distinción".</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🛡️ Regla de Palabras Clave para "Intercambio"</div>
+    <p>Dado que esta categoría es crítica, usa una capa de reglas adicional:</p>
+    <pre>PALABRAS_INTERCAMBIO = [
+    <span class="str">"intercambio"</span>, <span class="str">"movilidad"</span>, <span class="str">"erasmus"</span>,
+    <span class="str">"fulbright"</span>, <span class="str">"daad"</span>, <span class="str">"beca internacional"</span>,
+    <span class="str">"exterior"</span>, <span class="str">"doble titulación"</span>
+]
+
+<span class="kw">def</span> <span class="fn">clasificar_con_reglas</span>(texto):
+    texto_lower = texto.lower()
+    
+    <span class="cm"># Primero verificar palabras clave críticas</span>
+    <span class="kw">for</span> palabra <span class="kw">in</span> PALABRAS_INTERCAMBIO:
+        <span class="kw">if</span> palabra <span class="kw">in</span> texto_lower:
+            prob = pipeline.predict_proba([texto])[<span class="num">0</span>]
+            idx = list(pipeline.classes_).index(<span class="str">"intercambio"</span>)
+            <span class="kw">if</span> prob[idx] >= <span class="num">0.15</span>:  <span class="cm"># umbral bajo = más sensible</span>
+                <span class="kw">return</span> <span class="str">"intercambio"</span>
+    
+    <span class="cm"># Si no, usar predicción normal del modelo</span>
+    <span class="kw">return</span> pipeline.predict([texto])[<span class="num">0</span>]</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📈 Estrategias de Mejora</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-title">1. Más datos</div>
+        <div class="info-text">La mejora más impactante. Etiqueta manualmente correos reales de tu universidad.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">2. class_weight='balanced'</div>
+        <div class="info-text">Le dice al modelo que trate cada clase con igual importancia, aunque haya menos ejemplos.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">3. Combinar asunto + cuerpo</div>
+        <div class="info-text"><code>texto = f"{asunto} {asunto} {cuerpo}"</code> — repite el asunto para darle más peso.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">4. Ajuste del umbral</div>
+        <div class="info-text">Si la probabilidad máxima es &lt; 60%, considera marcarlo como "revisar manualmente".</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">5. Data augmentation</div>
+        <div class="info-text">Parafrasea ejemplos existentes con sinónimos para multiplicar los datos de entrenamiento.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">6. Grid Search</div>
+        <div class="info-text">Usa <code>GridSearchCV</code> para encontrar el mejor valor de C en LogisticRegression.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── API ─────────────────────────────────── -->
+<section id="api" class="section">
+  <h2 class="section-header">Convertir en API REST</h2>
+
+  <div class="card">
+    <div class="card-title">⚡ Setup con FastAPI</div>
+    <pre><span class="cm"># 1. Instalar dependencias</span>
+pip install fastapi uvicorn joblib scikit-learn
+
+<span class="cm"># 2. Ejecutar la API</span>
+uvicorn api_clasificador:app --reload --port <span class="num">8000</span>
+
+<span class="cm"># 3. Ver documentación automática</span>
+<span class="cm"># http://localhost:8000/docs</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔌 Endpoints Disponibles</div>
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <span class="path">/health</span>
+      <span class="ep-desc">— Estado del servicio</span>
+    </div>
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <span class="path">/categorias</span>
+      <span class="ep-desc">— Lista de categorías con descripción</span>
+    </div>
+    <div class="endpoint">
+      <span class="method post">POST</span>
+      <span class="path">/clasificar</span>
+      <span class="ep-desc">— Clasificar un correo</span>
+    </div>
+    <div class="endpoint">
+      <span class="method post">POST</span>
+      <span class="path">/clasificar/lote</span>
+      <span class="ep-desc">— Clasificar hasta 100 correos</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📡 Ejemplo de Request / Response</div>
+    <div class="row">
+      <div class="col">
+        <p style="font-size:0.75rem; color:var(--muted); margin-bottom:0.4rem">REQUEST</p>
+        <pre style="font-size:0.72rem">{
+  <span class="str">"texto"</span>: <span class="str">"Convocatoria Erasmus+
+  para movilidad en Europa"</span>,
+  <span class="str">"asunto"</span>: <span class="str">"Becas internacionales"</span>
+}</pre>
+      </div>
+      <div class="col">
+        <p style="font-size:0.75rem; color:var(--muted); margin-bottom:0.4rem">RESPONSE</p>
+        <pre style="font-size:0.72rem">{
+  <span class="str">"categoria"</span>: <span class="str">"intercambio"</span>,
+  <span class="str">"confianza"</span>: <span class="str">"94.3%"</span>,
+  <span class="str">"metodo"</span>: <span class="str">"regla + modelo"</span>,
+  <span class="str">"probabilidades"</span>: {
+    <span class="str">"intercambio"</span>: <span class="str">"94.3%"</span>,
+    <span class="str">"anuncio"</span>: <span class="str">"3.1%"</span>,
+    <span class="str">"evento"</span>: <span class="str">"1.8%"</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📧 Integración con Gmail (futuro)</div>
+    <pre><span class="cm"># Con la librería google-api-python-client:</span>
+<span class="kw">import</span> requests
+
+<span class="kw">def</span> <span class="fn">clasificar_gmail</span>(asunto, cuerpo):
+    response = requests.post(<span class="str">"http://localhost:8000/clasificar"</span>, json={
+        <span class="str">"texto"</span>: cuerpo[:500],  <span class="cm"># primeros 500 caracteres</span>
+        <span class="str">"asunto"</span>: asunto
+    })
+    resultado = response.json()
+    
+    <span class="cm"># Si es intercambio → mover a carpeta especial</span>
+    <span class="kw">if</span> resultado[<span class="str">"categoria"</span>] == <span class="str">"intercambio"</span>:
+        marcar_como_importante(email_id)
+        mover_a_carpeta(email_id, <span class="str">"✈️ Intercambios"</span>)</pre>
+
+    <div class="tip tip-green">
+      ✅ <strong>Ruta de integración completa:</strong> Gmail API → fetch correos → POST /clasificar/lote → aplicar etiquetas automáticamente. Puedes ejecutarlo como un cron job cada hora.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+  // ── Navigation ──────────────────────────────
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // ── Simulated Classifier ────────────────────
+  const EXAMPLES = [
+    { text: "Se publicó una nueva tarea en Classroom para el lunes", cat: "tarea" },
+    { text: "Notas del parcial disponibles en la plataforma", cat: "nota" },
+    { text: "Convocatoria abierta para intercambio académico en España 2026", cat: "intercambio" },
+    { text: "Evento de bienvenida para estudiantes de primer año", cat: "evento" },
+    { text: "Felicitaciones, obtuviste el mejor promedio del semestre", cat: "logro" },
+    { text: "Beca Fulbright para estudios en Estados Unidos, aplica ya", cat: "intercambio" },
+    { text: "El campus estará cerrado el próximo lunes festivo", cat: "anuncio" },
+    { text: "Programa Erasmus+ 2026, postulaciones abiertas hasta marzo", cat: "intercambio" },
+    { text: "Nuevo menú disponible en la cafetería universitaria", cat: "otro" },
+    { text: "Taller de liderazgo y habilidades blandas este viernes", cat: "evento" },
+  ];
+
+  const CAT_COLORS = {
+    tarea: '#4f9cf9', nota: '#22d3a0', anuncio: '#fbbf24',
+    evento: '#a78bfa', logro: '#fb923c', intercambio: '#f43f5e', otro: '#64748b'
+  };
+
+  const CAT_ICONS = {
+    tarea: '📚', nota: '📝', anuncio: '📢',
+    evento: '🗓️', logro: '🏆', intercambio: '✈️', otro: '📌'
+  };
+
+  // Build examples grid
+  const grid = document.getElementById('examples-grid');
+  EXAMPLES.forEach(ex => {
+    const div = document.createElement('div');
+    div.className = 'example-chip';
+    div.innerHTML = `
+      <span class="chip-cat" style="background:${CAT_COLORS[ex.cat]}22; color:${CAT_COLORS[ex.cat]}">${ex.cat}</span>
+      <span>${ex.text}</span>`;
+    div.onclick = () => {
+      document.getElementById('email-input').value = ex.text;
+      clasificar();
+    };
+    grid.appendChild(div);
+  });
+
+  // ── Simple keyword-based simulation ─────────
+  const RULES = {
+    intercambio: ['intercambio','movilidad','erasmus','fulbright','daad','beca internacional','exterior','doble titulación','internacional'],
+    tarea: ['tarea','entrega','actividad','trabajo práctico','subir','classroom','moodle','asignar','práctica'],
+    nota: ['nota','calificación','calificacion','parcial','examen','resultado','promedio','corregir','quiz'],
+    evento: ['evento','conferencia','taller','hackathon','feria','workshop','charla','ceremonia','semana','torneo','congreso'],
+    logro: ['felicitaciones','primer lugar','reconocimiento','distinción','distincion','honor','premio','ganaste','certificado','mejor estudiante'],
+    anuncio: ['aviso','comunicado','cierre','suspensión','suspension','cambio','importante','reglamento','informa','matrícula','matricula'],
+  };
+
+  function simClassify(text) {
+    const lower = text.toLowerCase();
+    let scores = {};
+    const cats = ['intercambio','tarea','nota','evento','logro','anuncio','otro'];
+    cats.forEach(c => { scores[c] = 0.02 + Math.random()*0.03; });
+
+    for (const [cat, keywords] of Object.entries(RULES)) {
+      for (const kw of keywords) {
+        if (lower.includes(kw)) {
+          scores[cat] += cat === 'intercambio' ? 0.35 : 0.25;
+        }
+      }
+    }
+
+    // Normalize
+    const total = Object.values(scores).reduce((a,b) => a+b, 0);
+    for (const k in scores) scores[k] = scores[k]/total;
+
+    const best = Object.entries(scores).sort((a,b) => b[1]-a[1])[0];
+    return { categoria: best[0], confianza: best[1], all: scores };
+  }
+
+  function clasificar() {
+    const text = document.getElementById('email-input').value.trim();
+    if (!text) return;
+
+    const result = simClassify(text);
+    const color = CAT_COLORS[result.categoria];
+    const icon = CAT_ICONS[result.categoria];
+
+    document.getElementById('result-cat').innerHTML =
+      `<span style="color:${color}">${icon} ${result.categoria.toUpperCase()}</span>`;
+    document.getElementById('result-conf').textContent =
+      `Confianza: ${(result.confianza*100).toFixed(1)}%`;
+
+    // Probability bars
+    const barContainer = document.getElementById('prob-bar');
+    barContainer.innerHTML = '';
+    const sorted = Object.entries(result.all).sort((a,b) => b[1]-a[1]);
+    sorted.forEach(([cat, prob]) => {
+      const row = document.createElement('div');
+      row.className = 'prob-row';
+      const pct = (prob*100).toFixed(1);
+      row.innerHTML = `
+        <div class="prob-label">${cat}</div>
+        <div class="prob-track">
+          <div class="prob-fill" style="width:0%; background:${CAT_COLORS[cat]}"></div>
+        </div>
+        <div class="prob-val">${pct}%</div>`;
+      barContainer.appendChild(row);
+      setTimeout(() => {
+        row.querySelector('.prob-fill').style.width = Math.min(pct*1.4, 100) + '%';
+      }, 50);
+    });
+
+    document.getElementById('result-box').classList.add('show');
+  }
+
+  function limpiar() {
+    document.getElementById('email-input').value = '';
+    document.getElementById('result-box').classList.remove('show');
+  }
+
+  // Enter key
+  document.getElementById('email-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.ctrlKey) clasificar();
+  });
+</script>
+</body>
+</html>
