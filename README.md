@@ -1,26 +1,26 @@
-# 📧 Clasificador de Correos con IA
+#  Clasificador de Correos con IA
 
 Sistema de Machine Learning que clasifica correos universitarios en diferentes categorías usando procesamiento de lenguaje natural (NLP).
 
 ---
 
-## 🚀 Descripción
+##  Descripción
 
 Este proyecto permite analizar automáticamente correos electrónicos y clasificarlos en categorías relevantes para estudiantes, como:
 
-* 📚 Tareas
-* 📝 Notas
-* 📢 Anuncios
-* 🎉 Eventos
-* 🏆 Logros
-* 🌍 Intercambios académicos
-* 📩 Otros
+* Tareas
+* Notas
+* Anuncios
+* Eventos
+* Logros
+* Intercambios académicos
+* Otros
 
 El objetivo es organizar y priorizar información importante de manera automática.
 
 ---
 
-## 🧠 Tecnologías utilizadas
+## Tecnologías utilizadas
 
 * Python
 * Pandas
@@ -31,7 +31,7 @@ El objetivo es organizar y priorizar información importante de manera automáti
 
 ---
 
-## ⚙️ ¿Cómo funciona?
+## ¿Cómo funciona?
 
 1. Se limpia el texto del correo
 2. Se transforma a vectores numéricos (TF-IDF)
@@ -40,7 +40,7 @@ El objetivo es organizar y priorizar información importante de manera automáti
 
 ---
 
-## 📊 Ejemplo
+## Ejemplo
 
 Entrada:
 
@@ -56,7 +56,7 @@ Categoría: intercambio
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 📦 clasificador-correos
@@ -69,7 +69,7 @@ Categoría: intercambio
 
 ---
 
-## 🛠️ Instalación
+## Instalación
 
 ```bash
 pip install pandas scikit-learn fastapi uvicorn joblib
@@ -77,7 +77,7 @@ pip install pandas scikit-learn fastapi uvicorn joblib
 
 ---
 
-## ▶️ Ejecutar el modelo
+## Ejecutar el modelo
 
 ```bash
 python clasificador_correos.py
@@ -85,7 +85,7 @@ python clasificador_correos.py
 
 ---
 
-## 🌐 Ejecutar la API
+## Ejecutar la API
 
 ```bash
 uvicorn api_clasificador:app --reload
@@ -99,7 +99,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 🧪 Ejemplo de uso (Python)
+## Ejemplo de uso (Python)
 
 ```python
 import joblib
@@ -112,16 +112,16 @@ print(modelo.predict([texto]))
 
 ---
 
-## 📈 Estado del proyecto
+## Estado del proyecto
 
 * ✔️ Modelo funcional
 * ✔️ Clasificación multicategoría
 * ✔️ API REST
-* 🔄 Mejora continua con más datos
+* 🔄 Mejora continua con más datos (75 ejemplos datos, objetivo 1000 datos)
 
 ---
 
-## 🔥 Futuras mejoras
+## Futuras mejoras
 
 * Integración con Gmail API
 * Mejorar precisión del modelo
@@ -130,6 +130,6 @@ print(modelo.predict([texto]))
 
 ---
 
-## ⭐ Nota
+## Nota
 
 Este proyecto fue desarrollado como práctica de Machine Learning aplicado a problemas reales.
