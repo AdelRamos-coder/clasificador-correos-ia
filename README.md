@@ -59,12 +59,12 @@ Categoría: intercambio
 ## Estructura del proyecto
 
 ```
-📦 clasificador-correos
- ┣ 📄 clasificador_correos.py   # Modelo ML
- ┣ 📄 api_clasificador.py       # API con FastAPI
- ┣ 📄 correos.csv               # Dataset
- ┣ 📄 guia_clasificador.html    # Interfaz de prueba
- ┣ 📄 clasificador_correos.pkl  # Modelo entrenado
+clasificador-correos
+ ┣ clasificador_correos.py   # Modelo ML
+ ┣ api_clasificador.py       # API con FastAPI
+ ┣ correos.csv               # Dataset
+ ┣ guia_clasificador.html    # Interfaz de prueba
+ ┣ clasificador_correos.pkl  # Modelo entrenado
 ```
 
 ---
