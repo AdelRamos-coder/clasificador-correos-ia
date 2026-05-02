@@ -1,4 +1,110 @@
 texto,categoria
-"Se subió una nueva tarea en Classroom","tarea"
-"Notas del parcial disponibles","nota"
-"Convocatoria de intercambio en España","intercambio"
+Se subió una nueva tarea en Classroom,tarea
+Notas del parcial disponibles,nota
+Convocatoria de intercambio en España,intercambio
+texto,categoria
+tarea subida en classroom sistemas operativos entrega proxima,tarea
+actividad pendiente base de datos entrega viernes,tarea
+trabajo final asignado por profesor desarrollo software,tarea
+nuevo taller disponible en classroom completar actividad,tarea
+evaluacion disponible revisar tarea asignada,tarea
+nota final publicada en sicau revisar calificaciones,nota
+calificaciones parciales ya disponibles en plataforma,nota
+profesor subio notas del examen revisar resultado,nota
+resultado evaluacion disponible en sistema academico,nota
+notas del curso actualizadas revisar promedio,nota
+evento charla inteligencia artificial estudiantes universidad,evento
+conferencia virtual ciencia de datos registro abierto,evento
+taller programacion python evento academico,evento
+webinar tecnologia y desarrollo software estudiantes,evento
+evento presencial ingenieria sistemas conferencia invitados,evento
+convocatoria intercambio academico espana estudiantes,intercambio
+beca internacional fulbright aplicacion abierta,intercambio
+programa movilidad estudiantil alemania convocatoria abierta,intercambio
+intercambio internacional requisitos y fechas aplicacion,intercambio
+oportunidad estudiar exterior convocatoria estudiantes,intercambio
+anuncio cierre inscripciones semestre academico,anuncio
+informacion institucional cambios calendario academico,anuncio
+comunicado rectoria decisiones importantes universidad,anuncio
+aviso suspension clases lunes festivo,anuncio
+anuncio general comunidad estudiantil informacion importante,anuncio
+nuevo material disponible clase sistemas operativos,otro
+documentos enviados por profesor revisar archivos,otro
+contenido adicional curso base de datos material apoyo,otro
+recurso academico compartido profesor clase,otro
+archivos adjuntos informacion clase revisar contenido,otro
+felicitaciones estudiante destacado mejor promedio semestre,logro
+reconocimiento academico estudiantes excelencia universidad,logro
+logro institucional premio obtenido universidad,logro
+estudiante gana concurso tecnologia felicitaciones,logro
+reconocimiento rendimiento academico estudiantes destacados,logro
+evento bienestar universitario actividad recreativa estudiantes,evento
+charla salud mental estudiantes universidad,evento
+taller habilidades blandas desarrollo personal evento,evento
+actividad deportiva estudiantes universidad evento,evento
+evento cultural universidad participacion abierta,evento
+nueva tarea programacion orientada objetos entrega lunes,tarea
+actividad evaluativa disponible plataforma completar,tarea
+taller bases de datos consulta sql entrega,tarea
+ejercicio practico sistemas operativos tarea asignada,tarea
+trabajo investigacion asignado curso tecnologia,tarea
+notas examen final disponibles revisar sistema,nota
+calificaciones actividad reciente publicadas plataforma,nota
+resultado parcial disponible sistema academico,nota
+evaluacion calificada revisar notas plataforma,nota
+notas actualizadas curso revisar promedio final,nota
+convocatoria intercambio canada estudiantes ingenieria,intercambio
+programa erasmus convocatoria abierta estudiantes,intercambio
+beca internacional estudio exterior estudiantes universidad,intercambio
+movilidad academica internacional requisitos convocatoria,intercambio
+intercambio universidad extranjera aplicacion abierta,intercambio
+aviso mantenimiento plataforma sicau no disponible,anuncio
+comunicado importante estudiantes informacion academica,anuncio
+anuncio inicio semestre academico fechas importantes,anuncio
+informacion inscripciones cursos periodo academico,anuncio
+aviso general universidad estudiantes informacion,anuncio
+material clase virtualizacion sistemas operativos contenido,otro
+documento apoyo curso desarrollo software material,otro
+archivos clase compartidos profesor revisar contenido,otro
+contenido adicional clase material academico,otro
+recurso aprendizaje enviado profesor clase,otro
+reconocimiento estudiantes destacados ceremonia universidad,logro
+premio innovacion estudiantes proyecto destacado,logro
+logro academico estudiantes felicitaciones comunidad,logro
+distincion honorifica estudiantes universidad reconocimiento,logro
+excelencia academica estudiantes reconocimiento institucional,logro
+evento tecnologia innovacion estudiantes conferencia,evento
+charla emprendimiento estudiantes universidad evento,evento
+taller desarrollo web evento academico estudiantes,evento
+evento inteligencia artificial conferencia universidad,evento
+actividad academica evento participacion estudiantes,evento
+tarea laboratorio sistemas operativos entrega proxima,tarea
+actividad practica base de datos tarea asignada,tarea
+ejercicio desarrollo software tarea curso,tarea
+trabajo grupal asignado clase tecnologia,tarea
+taller programacion tarea disponible plataforma,tarea
+nota actividad evaluativa publicada sistema,nota
+resultado examen parcial disponible notas,nota
+calificaciones curso disponibles plataforma revisar,nota
+evaluacion final publicada revisar resultado,nota
+notas estudiantes disponibles sistema academico,nota
+convocatoria movilidad internacional estudiantes ingenieria,intercambio
+beca estudios exterior convocatoria abierta universidad,intercambio
+programa intercambio internacional estudiantes requisitos,intercambio
+oportunidad movilidad academica estudiantes universidad,intercambio
+intercambio estudiantes convocatoria internacional abierta,intercambio
+anuncio informacion general estudiantes universidad,anuncio
+comunicado institucional importante comunidad academica,anuncio
+aviso general informacion relevante estudiantes,anuncio
+anuncio cierre actividades academicas periodo,anuncio
+informacion institucional estudiantes universidad aviso,anuncio
+material adicional curso tecnologia archivos compartidos,otro
+contenido clase enviado profesor material apoyo,otro
+documentos clase disponibles revisar contenido,otro
+recurso academico curso material aprendizaje,otro
+archivos enviados profesor clase revisar,otro
+logro estudiantes reconocimiento excelencia academica,logro
+premio estudiantes proyecto innovador reconocimiento,logro
+felicitaciones logro academico estudiantes destacados,logro
+reconocimiento institucional estudiantes rendimiento alto,logro
+distincion estudiantes universidad logro academico,logro
