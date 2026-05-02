@@ -79,7 +79,8 @@ PALABRAS_INTERCAMBIO = [
 
 
 def clasificar(texto: str, asunto: str = "") -> dict:
-    texto_completo = f"{asunto} {texto}".strip()
+    # Repetimos el asunto para darle más peso en la clasificación
+    texto_completo = f"{asunto} {asunto} {texto}".strip()
     texto_limpio = limpiar_texto(texto_completo)
 
     texto_lower = texto_completo.lower()
