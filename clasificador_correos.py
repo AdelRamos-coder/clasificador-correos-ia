@@ -228,6 +228,8 @@ def main():
     # CORRECCIÓN: limpiar_texto ya está definida arriba,
     # así que .apply(limpiar_texto) funciona sin error
     df = pd.read_csv("correos.csv")
+    # Elimina filas donde la categoría sea el encabezado duplicado
+    df = df[df["categoria"] != "categoria"].reset_index(drop=True)
     df["texto_limpio"] = df["texto"].apply(limpiar_texto)
 
     print("=" * 55)
