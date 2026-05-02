@@ -124,28 +124,10 @@ datos = [
     ("Nuevo reglamento de uso de laboratorios de computación", "otro"),
 ]
 
-# Convertir a DataFrame
-df = pd.read_csv("correos.csv")
-df["texto_limpio"] = df["texto"].apply(limpiar_texto)
-
-print("=" * 55)
-print("  DISTRIBUCIÓN DEL DATASET")
-print("=" * 55)
-print(df["categoria"].value_counts())
-print(f"\nTotal de ejemplos: {len(df)}")
-print()
-
 
 # ──────────────────────────────────────────────
 # 3. LIMPIEZA DE TEXTO
-#    Pasos:
-#    a) Convertir a minúsculas
-#    b) Eliminar caracteres especiales y números
-#    c) Quitar espacios extra
-#
-#    NOTA: Para español NO eliminamos tildes ni 'ñ'
-#    porque son parte del vocabulario y ayudan
-#    a distinguir palabras.
+#    CORRECCIÓN: Definida ANTES de ser usada
 # ──────────────────────────────────────────────
 def limpiar_texto(texto: str) -> str:
     """
@@ -175,125 +157,17 @@ def limpiar_texto(texto: str) -> str:
     return texto
 
 
-# Aplicar limpieza al dataset
-df["texto_limpio"] = df["texto"].apply(limpiar_texto)
-
-print("Ejemplo de limpieza:")
-print(f"  Original:  {df['texto'][0]}")
-print(f"  Limpio:    {df['texto_limpio'][0]}")
-print()
-
-
 # ──────────────────────────────────────────────
-# 4. SEPARAR DATOS EN ENTRENAMIENTO Y PRUEBA
-#    80% para entrenar, 20% para evaluar
-#    stratify=y asegura que cada categoría
-#    tenga representación en ambos conjuntos
+# 4. FUNCIÓN DE PREDICCIÓN
+#    CORRECCIÓN: Definida ANTES de ser llamada en main()
 # ──────────────────────────────────────────────
-X = df["texto_limpio"]
-y = df["categoria"]
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y,
-    test_size=0.20,
-    random_state=42,
-    stratify=y
-)
-
-print(f"Datos de entrenamiento: {len(X_train)} ejemplos")
-print(f"Datos de prueba:        {len(X_test)} ejemplos")
-print()
-
-
-# ──────────────────────────────────────────────
-# 5. VECTORIZACIÓN CON TF-IDF
-#
-#    TF-IDF = Term Frequency × Inverse Document Frequency
-#
-#    - TF: qué tan frecuente es una palabra en UN correo
-#    - IDF: qué tan rara es esa palabra en TODOS los correos
-#    - Palabras muy comunes ("el", "la") obtienen peso bajo
-#    - Palabras específicas ("intercambio", "beca") peso alto
-#
-#    ngram_range=(1,2): considera palabras solas Y pares
-#    "intercambio académico" será una característica propia
-# ──────────────────────────────────────────────
-
-# ──────────────────────────────────────────────
-# 6. MODELO: Regresión Logística con Pipeline
-#
-#    Pipeline combina preprocesamiento + modelo en un solo objeto.
-#    Ventajas:
-#    - Evita errores de data leakage
-#    - Más fácil de guardar y reutilizar
-#    - Una sola llamada para predecir
-#
-#    ¿Por qué Logresión Logística?
-#    - Funciona muy bien con texto y TF-IDF
-#    - Rápido de entrenar
-#    - Fácil de interpretar
-#    - Buena precisión en clasificación de texto
-# ──────────────────────────────────────────────
-pipeline = Pipeline([
-    ("tfidf", TfidfVectorizer(
-        ngram_range=(1, 2),   # unigramas y bigramas
-        max_features=5000,    # máximo 5000 características
-        min_df=1,             # al menos 1 documento (dataset pequeño)
-        sublinear_tf=True,    # escala logarítmica para TF
-    )),
-    ("modelo", LogisticRegression(
-        max_iter=1000,
-        C=1.0,                # regularización
-        random_state=42
-    ))
-])
-
-
-# ──────────────────────────────────────────────
-# 7. ENTRENAMIENTO
-# ──────────────────────────────────────────────
-print("=" * 55)
-print("  ENTRENANDO MODELO...")
-print("=" * 55)
-pipeline.fit(X_train, y_train)
-print("✓ Modelo entrenado exitosamente")
-print()
-
-
-# ──────────────────────────────────────────────
-# 8. EVALUACIÓN DEL MODELO
-# ──────────────────────────────────────────────
-y_pred = pipeline.predict(X_test)
-
-print("=" * 55)
-print("  EVALUACIÓN EN DATOS DE PRUEBA")
-print("=" * 55)
-print(f"Accuracy: {accuracy_score(y_test, y_pred):.2%}\n")
-
-print("Reporte completo por categoría:")
-print("-" * 55)
-print(classification_report(y_test, y_pred))
-
-# Validación cruzada (más confiable con dataset pequeño)
-print("=" * 55)
-print("  VALIDACIÓN CRUZADA (5 folds)")
-print("=" * 55)
-scores = cross_val_score(pipeline, X, y, cv=5, scoring="accuracy")
-print(f"Accuracy promedio: {scores.mean():.2%} ± {scores.std():.2%}")
-print(f"Scores individuales: {[f'{s:.2%}' for s in scores]}")
-print()
-
-
-# ──────────────────────────────────────────────
-# 9. FUNCIÓN DE PREDICCIÓN
-#    Esta es la función que usarás en producción
-# ──────────────────────────────────────────────
-def clasificar_correo(texto: str, umbral_intercambio: float = 0.20) -> dict:
+def clasificar_correo(texto: str, pipeline, umbral_intercambio: float = 0.20) -> dict:
     """
     Clasifica un correo universitario en su categoría.
 
     Args:
         texto: El texto del correo a clasificar
+        pipeline: El pipeline entrenado
         umbral_intercambio: probabilidad mínima para forzar
                             la categoría intercambio cuando
                             hay palabras clave claras
@@ -301,7 +175,6 @@ def clasificar_correo(texto: str, umbral_intercambio: float = 0.20) -> dict:
     Returns:
         dict con 'categoria', 'confianza' y 'probabilidades'
     """
-    # Palabras clave que indican intercambio con alta certeza
     palabras_intercambio = [
         "intercambio", "movilidad", "erasmus", "fulbright",
         "beca internacional", "exterior", "extranjero",
@@ -317,7 +190,6 @@ def clasificar_correo(texto: str, umbral_intercambio: float = 0.20) -> dict:
             prob = pipeline.predict_proba([texto_limpio])[0]
             clases = pipeline.classes_
             probs_dict = dict(zip(clases, prob))
-            # Solo forzar si el modelo no está seguro de otra categoría
             if probs_dict.get("intercambio", 0) >= umbral_intercambio:
                 return {
                     "categoria": "intercambio",
@@ -347,76 +219,141 @@ def clasificar_correo(texto: str, umbral_intercambio: float = 0.20) -> dict:
 
 
 # ──────────────────────────────────────────────
-# 10. PRUEBAS CON EJEMPLOS REALES
+# 5. FUNCIÓN PRINCIPAL
+#    Todo el código ejecutable va aquí dentro
 # ──────────────────────────────────────────────
-print("=" * 55)
-print("  PRUEBAS CON EJEMPLOS")
-print("=" * 55)
+def main():
 
-ejemplos = [
-    "Se publicó una nueva tarea en Classroom",
-    "Notas del parcial disponibles en la plataforma",
-    "Convocatoria abierta para intercambio académico en España",
-    "Evento de bienvenida para estudiantes nuevos",
-    "Felicitaciones, obtuviste el mejor promedio del semestre",
-    "Beca Fulbright para estudios en Estados Unidos, aplica ya",
-    "El campus estará cerrado el próximo lunes festivo",
-    "Programa Erasmus+ 2026, postulaciones abiertas hasta marzo",
-]
+    # ── Cargar datos ───────────────────────────
+    # CORRECCIÓN: limpiar_texto ya está definida arriba,
+    # así que .apply(limpiar_texto) funciona sin error
+    df = pd.read_csv("correos.csv")
+    df["texto_limpio"] = df["texto"].apply(limpiar_texto)
 
-for correo in ejemplos:
-    resultado = clasificar_correo(correo)
-    print(f"\nCorreo: \"{correo}\"")
-    print(f"  → Categoría: {resultado['categoria'].upper()}")
-    print(f"  → Confianza: {resultado['confianza']}")
+    print("=" * 55)
+    print("  DISTRIBUCIÓN DEL DATASET")
+    print("=" * 55)
+    print(df["categoria"].value_counts())
+    print(f"\nTotal de ejemplos: {len(df)}")
+    print()
+
+    print("Ejemplo de limpieza:")
+    print(f"  Original:  {df['texto'][0]}")
+    print(f"  Limpio:    {df['texto_limpio'][0]}")
+    print()
+
+    # ── Separar datos ──────────────────────────
+    X = df["texto_limpio"]
+    y = df["categoria"]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y,
+        test_size=0.20,
+        random_state=42,
+        stratify=y
+    )
+
+    print(f"Datos de entrenamiento: {len(X_train)} ejemplos")
+    print(f"Datos de prueba:        {len(X_test)} ejemplos")
+    print()
+
+    # ── Construir pipeline ─────────────────────
+    pipeline = Pipeline([
+        ("tfidf", TfidfVectorizer(
+            ngram_range=(1, 2),
+            max_features=5000,
+            min_df=1,
+            sublinear_tf=True,
+        )),
+        ("modelo", LogisticRegression(
+            max_iter=1000,
+            C=1.0,
+            random_state=42
+        ))
+    ])
+
+    # ── Entrenar ───────────────────────────────
+    print("=" * 55)
+    print("  ENTRENANDO MODELO...")
+    print("=" * 55)
+    pipeline.fit(X_train, y_train)
+    print("✓ Modelo entrenado exitosamente")
+    print()
+
+    # ── Evaluar ────────────────────────────────
+    y_pred = pipeline.predict(X_test)
+
+    print("=" * 55)
+    print("  EVALUACIÓN EN DATOS DE PRUEBA")
+    print("=" * 55)
+    print(f"Accuracy: {accuracy_score(y_test, y_pred):.2%}\n")
+
+    print("Reporte completo por categoría:")
+    print("-" * 55)
+    print(classification_report(y_test, y_pred))
+
+    print("=" * 55)
+    print("  VALIDACIÓN CRUZADA (5 folds)")
+    print("=" * 55)
+    scores = cross_val_score(pipeline, X, y, cv=5, scoring="accuracy")
+    print(f"Accuracy promedio: {scores.mean():.2%} ± {scores.std():.2%}")
+    print(f"Scores individuales: {[f'{s:.2%}' for s in scores]}")
+    print()
+
+    # ── Pruebas con ejemplos ───────────────────
+    # CORRECCIÓN: clasificar_correo ahora recibe pipeline como argumento
+    print("=" * 55)
+    print("  PRUEBAS CON EJEMPLOS")
+    print("=" * 55)
+
+    ejemplos = [
+        "Se publicó una nueva tarea en Classroom",
+        "Notas del parcial disponibles en la plataforma",
+        "Convocatoria abierta para intercambio académico en España",
+        "Evento de bienvenida para estudiantes nuevos",
+        "Felicitaciones, obtuviste el mejor promedio del semestre",
+        "Beca Fulbright para estudios en Estados Unidos, aplica ya",
+        "El campus estará cerrado el próximo lunes festivo",
+        "Programa Erasmus+ 2026, postulaciones abiertas hasta marzo",
+    ]
+
+    for correo in ejemplos:
+        resultado = clasificar_correo(correo, pipeline)
+        print(f"\nCorreo: \"{correo}\"")
+        print(f"  → Categoría: {resultado['categoria'].upper()}")
+        print(f"  → Confianza: {resultado['confianza']}")
+
+    # ── Guardar modelo ─────────────────────────
+    joblib.dump(pipeline, "clasificador_correos.pkl")
+    print("\n\n✓ Modelo guardado en: clasificador_correos.pkl")
+
+    # ── Comparar modelos ───────────────────────
+    print("\n" + "=" * 55)
+    print("  COMPARACIÓN DE MODELOS")
+    print("=" * 55)
+
+    modelos = {
+        "Regresión Logística": LogisticRegression(max_iter=1000, random_state=42),
+        "SVM Lineal":          LinearSVC(max_iter=1000, random_state=42),
+        "Random Forest":       RandomForestClassifier(n_estimators=100, random_state=42),
+    }
+
+    vectorizador = TfidfVectorizer(ngram_range=(1, 2), max_features=5000, sublinear_tf=True)
+    X_vec = vectorizador.fit_transform(X)
+
+    for nombre, modelo in modelos.items():
+        scores = cross_val_score(modelo, X_vec, y, cv=5, scoring="accuracy")
+        print(f"{nombre:25s}: {scores.mean():.2%} ± {scores.std():.2%}")
+
+    print("\n" + "=" * 55)
+    print("  PROCESO COMPLETADO")
+    print("=" * 55)
 
 
 # ──────────────────────────────────────────────
-# 11. GUARDAR EL MODELO
-#     Guarda el pipeline completo (vectorizador + modelo)
-#     para reutilizarlo sin reentrenar
+# PUNTO DE ENTRADA
+# Esto permite importar este archivo desde api_clasificador.py
+# sin que el entrenamiento se ejecute automáticamente
 # ──────────────────────────────────────────────
-joblib.dump(pipeline, "clasificador_correos.pkl")
-print("\n\n✓ Modelo guardado en: clasificador_correos.pkl")
-
-
-# ──────────────────────────────────────────────
-# 12. CÓMO CARGAR Y USAR EL MODELO GUARDADO
-# ──────────────────────────────────────────────
-"""
-# En otro script o en tu API:
-import joblib
-
-pipeline = joblib.load("clasificador_correos.pkl")
-
-def predecir(texto):
-    texto_limpio = limpiar_texto(texto)
-    return pipeline.predict([texto_limpio])[0]
-"""
-
-
-# ──────────────────────────────────────────────
-# 13. COMPARAR DIFERENTES MODELOS
-#     (opcional, para elegir el mejor)
-# ──────────────────────────────────────────────
-print("\n" + "=" * 55)
-print("  COMPARACIÓN DE MODELOS")
-print("=" * 55)
-
-modelos = {
-    "Regresión Logística": LogisticRegression(max_iter=1000, random_state=42),
-    "SVM Lineal":          LinearSVC(max_iter=1000, random_state=42),
-    "Random Forest":       RandomForestClassifier(n_estimators=100, random_state=42),
-}
-
-vectorizador = TfidfVectorizer(ngram_range=(1, 2), max_features=5000, sublinear_tf=True)
-X_vec = vectorizador.fit_transform(X)
-
-for nombre, modelo in modelos.items():
-    scores = cross_val_score(modelo, X_vec, y, cv=5, scoring="accuracy")
-    print(f"{nombre:25s}: {scores.mean():.2%} ± {scores.std():.2%}")
-
-
-print("\n" + "=" * 55)
-print("  PROCESO COMPLETADO")
-print("=" * 55)
+if __name__ == "__main__":
+    main()
