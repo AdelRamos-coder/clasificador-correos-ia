@@ -125,7 +125,8 @@ datos = [
 ]
 
 # Convertir a DataFrame
-df = pd.DataFrame(datos, columns=["texto", "categoria"])
+df = pd.read_csv("correos.csv")
+df["texto_limpio"] = df["texto"].apply(limpiar_texto)
 
 print("=" * 55)
 print("  DISTRIBUCIÓN DEL DATASET")
