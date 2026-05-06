@@ -34,9 +34,9 @@ pipeline = joblib.load(MODEL_PATH)
 
 # ── Crear aplicación FastAPI ──────────────────
 app = FastAPI(
-    title="Clasificador de Correos Universitarios",
-    description="API para clasificar correos en: tarea, nota, anuncio, evento, logro, intercambio, otro",
-    version="1.0.0"
+    title="Clasificador de Correos - Pascual Bravo",
+    description="API para clasificar correos universitarios en: tarea, nota, anuncio, evento, logro, intercambio, otro",
+    version="2.0.0"
 )
 
 
@@ -117,8 +117,8 @@ def clasificar(texto: str, asunto: str = "") -> dict:
 @app.get("/")
 def raiz():
     return {
-        "mensaje": "Clasificador de Correos Universitarios",
-        "version": "1.0.0",
+        "mensaje": "Clasificador de Correos - Institución Universitaria Pascual Bravo",
+        "version": "2.0.0",
         "endpoints": {
             "POST /clasificar": "Clasificar un correo",
             "POST /clasificar/lote": "Clasificar múltiples correos",
