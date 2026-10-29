@@ -1,10 +1,10 @@
-# 📧 Clasificador de Correos con IA — Pascual Bravo
+# Clasificador de Correos con IA — Pascual Bravo
 
 Sistema de Machine Learning que clasifica automáticamente correos universitarios de la **Institución Universitaria Pascual Bravo** en 7 categorías usando procesamiento de lenguaje natural (NLP).
 
 ---
 
-## 📋 Descripción
+## Descripción
 
 Este proyecto analiza correos electrónicos universitarios y los clasifica automáticamente, ayudando a los estudiantes a organizar y priorizar la información que reciben.
 
@@ -12,17 +12,17 @@ Este proyecto analiza correos electrónicos universitarios y los clasifica autom
 
 | Categoría | Descripción |
 |-----------|-------------|
-| 📚 **tarea** | Asignaciones, talleres, entregas, quizzes |
-| 📝 **nota** | Calificaciones y resultados de exámenes |
-| 📢 **anuncio** | Avisos institucionales, cambios, comunicados |
-| 🗓️ **evento** | Conferencias, hackathons, talleres, ceremonias |
-| 🏆 **logro** | Reconocimientos, premios, distinciones |
-| ✈️ **intercambio** | Movilidad académica, becas internacionales |
-| 📌 **otro** | Información general (carné, transporte, encuestas) |
+| **tarea** | Asignaciones, talleres, entregas, quizzes |
+| **nota** | Calificaciones y resultados de exámenes |
+| **anuncio** | Avisos institucionales, cambios, comunicados |
+| **evento** | Conferencias, hackathons, talleres, ceremonias |
+| **logro** | Reconocimientos, premios, distinciones |
+| **intercambio** | Movilidad académica, becas internacionales |
+| **otro** | Información general (carné, transporte, encuestas) |
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - **Python 3.10+**
 - **Pandas** — manipulación de datos
@@ -33,7 +33,7 @@ Este proyecto analiza correos electrónicos universitarios y los clasifica autom
 
 ---
 
-## ⚙️ ¿Cómo funciona?
+## ¿Cómo funciona?
 
 1. El correo entra como texto (asunto + cuerpo).
 2. Se **limpia** (minúsculas, sin URLs, sin emails, sin símbolos).
@@ -43,7 +43,7 @@ Este proyecto analiza correos electrónicos universitarios y los clasifica autom
 
 ---
 
-## 📂 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 clasificador-correos/
@@ -56,7 +56,7 @@ clasificador-correos/
 
 ---
 
-## 🚀 Instalación
+## Instalación
 
 ```bash
 pip install pandas scikit-learn fastapi uvicorn joblib
@@ -64,7 +64,7 @@ pip install pandas scikit-learn fastapi uvicorn joblib
 
 ---
 
-## ▶️ Uso
+## Uso
 
 ### 1. Entrenar el modelo
 
@@ -95,7 +95,7 @@ print(prediccion)  # ['intercambio']
 
 ---
 
-## 📊 Dataset
+## Dataset
 
 El archivo `correos.csv` contiene **1000 correos sintéticos** generados con el contexto real del Pascual Bravo: profesores, materias (Cálculo, Programación, Circuitos, Termodinámica, etc.), plataformas (Moodle, SICAU, Teams) y oficinas institucionales.
 
@@ -112,7 +112,7 @@ El archivo `correos.csv` contiene **1000 correos sintéticos** generados con el 
 
 ---
 
-## 📈 Métricas del modelo
+## Métricas del modelo
 
 - **Accuracy en test**: ~100%
 - **Validación cruzada (5 folds)**: 99.9% ± 0.2%
@@ -122,18 +122,18 @@ El archivo `correos.csv` contiene **1000 correos sintéticos** generados con el 
 
 ---
 
-## 🎯 Estado del proyecto
+## Estado del proyecto
 
-- ✔️ Modelo funcional con 1000 ejemplos
-- ✔️ Clasificación multicategoría (7 clases)
-- ✔️ API REST con FastAPI
-- ✔️ Regla de negocio para detectar intercambios
-- ✔️ Validación cruzada y comparación de modelos
-- 🔄 Pendiente: integración con Gmail API
+- Modelo funcional con 1000 ejemplos
+- Clasificación multicategoría (7 clases)
+- API REST con FastAPI
+- Regla de negocio para detectar intercambios
+- Validación cruzada y comparación de modelos
+- Pendiente: integración con Gmail API
 
 ---
 
-## 🔮 Futuras mejoras
+## Futuras mejoras
 
 - [ ] Integración con Gmail API para clasificar la bandeja real
 - [ ] Sistema de priorización (correos urgentes primero)
@@ -143,6 +143,6 @@ El archivo `correos.csv` contiene **1000 correos sintéticos** generados con el 
 
 ---
 
-## 📝 Nota
+## Nota
 
 Proyecto desarrollado como práctica de Machine Learning aplicado a problemas reales de la vida universitaria en la **Institución Universitaria Pascual Bravo**.
